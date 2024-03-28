@@ -1,7 +1,11 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ShopController;
+use App\Http\Controllers\Wine\CategoryController;
+use App\Http\Controllers\WineController;
 
 Route::get('/', function () {
     // ray('web.php');
@@ -20,3 +24,36 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::group(['middleware' => 'auth', 'verified'], function () {
+
+    Route::resource('categories', CategoryController::class)->except('show');
+
+    Route::resource('wines', WineController::class)->except('show');
+
+    Route::prefix('shop')->name('shop.')->group(function () {
+
+        Route::get('/', [ShopController::class, 'index'])->name('index');
+
+        Route::post('/add-to-cart', [ShopController::class, 'addToCart'])->name('addToCart');
+
+        Route::post('/increment', [ShopController::class, 'increment'])->name('increment');
+
+        Route::post('/decrement', [ShopController::class, 'decrement'])->name('decrement');
+
+        Route::post('/remove', [ShopController::class, 'remove'])->name('remove');
+    });
+
+    Route::prefix('cart')->name('cart.')->group(function () {
+
+        Route::get('/', [CartController::class, 'index'])->name('index');
+
+        Route::post('/increment', [ShopController::class, 'increment'])->name('increment');
+
+        Route::post('/decrement', [ShopController::class, 'decrement'])->name('decrement');
+
+        Route::post('/remove', [ShopController::class, 'remove'])->name('remove');
+
+        Route::post('/clear', [ShopController::class, 'clear'])->name('clear');
+    });
+});
