@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('wines', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Category::class)->constrained();
+            $table->foreignIdFor(Category::class)->constrained(); // category_id
             $table->string('name')->unique();
             $table->string('slug')->unique();
             $table->text('description');
